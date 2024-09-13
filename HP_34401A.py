@@ -59,6 +59,9 @@ class HP_34401A(object):
 		NPLC_1       = 3
 		NPLC_10      = 4
 		NPLC_100     = 5
+
+	def __str__(self):
+		return "HP 34401A address: " + str(self.address)
 	
 	def preCommand(self):
 		if self.gpib.address != self.address or self.firstTime:
