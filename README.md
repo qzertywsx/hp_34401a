@@ -144,6 +144,6 @@ dmm.local()
 ## Result of executing the above code:
 ```
 HP 34401A address: 3
-Voltage: 239.42613 V
-Frequency: 49.988412 Hz
+Voltage: 239.37351 V
+Frequency: 50.016148 Hz
 ```
