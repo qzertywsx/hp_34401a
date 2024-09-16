@@ -130,7 +130,7 @@ class HP_34401A(object):
 		self._preCommand()
 		self.gpib.write("READ?", sleep)
 		try:
-			return float(self.gpib.query("++read"))
+			return float(self.gpib.query("++read", sleep))
 		except:
 			return False
 	
@@ -176,7 +176,7 @@ class HP_34401A(object):
 		self.gpib.write("DISP:TEXT:CLEAR")
 	
 	def setDisplayText(self, text):
-		"""Set a custom text on the display (Max ? character)"""
+		"""Set a custom text on the display (Max 12 character)"""
 		self._preCommand()
 		self.gpib.write(f"DISP:TEXT \"{text}\"")
 	
