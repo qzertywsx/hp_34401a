@@ -107,7 +107,7 @@ Return the number of NPLC or `False` in case of problem
 ### beep()
 Emit a beep
 
-### setDisplay(on)
+### setDisplayState(on)
 Switch the display on or off
 <table>
   <tr><td>on</td><td>Description</td></tr>
