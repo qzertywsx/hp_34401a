@@ -6,7 +6,11 @@ class HP_34401A(object):
 		self.gpib = gpib
 		self.firstTime = True
 		self.dispMode = self.DisplayMode.NORMAL
-		self.preCommand()
+		self._preCommand()
+	
+	class DisplayMode(Enum):
+		NORMAL = 0
+		TEXT   = 1
 	
 	class Resolution(Enum):
 		DIGIT_AUTO = 0
@@ -59,25 +63,29 @@ class HP_34401A(object):
 		NPLC_1       = 3
 		NPLC_10      = 4
 		NPLC_100     = 5
-
+	
 	def __str__(self):
 		return "HP 34401A address: " + str(self.address)
 	
-	def preCommand(self):
+	def _preCommand(self):
+		"""Command to be executed before every other command"""
 		if self.gpib.address != self.address or self.firstTime:
 			self.firstTime = False
 			self.gpib.set_address(self.address)
 			self.gpib.write("++eor 2")
 	
 	def get_IDN(self):
+		"""Return the *IDN? of the instrument"""
 		return self.gpib.get_IDN()
 	
 	def reset(self):
-		self.preCommand()
+		"""Reset the instrument to the default state"""
+		self._preCommand()
 		self.gpib.write("*CLS")
 	
 	def setFunction(self, function, sel_range=0, resolution=0):
-		self.preCommand()
+		"""Set the function"""
+		self._preCommand()
 		if function   == self.Function.VOLTAGE_DC:
 			list_range = ["DEF", "0.1", "1", "10", "100", "1000"]
 			list_res = [["DEF", "DEF", "DEF", "DEF"],["DEF", "1e-5", "1e-6", "1e-7"],["DEF", "1e-4", "1e-5", "1e-6"],["DEF", "1e-3", "1e-4", "1e-5"],["DEF", "1e-2", "1e-3", "1e-4"],["DEF", "1e-1", "1e-2", "1e-3"]]
@@ -118,7 +126,8 @@ class HP_34401A(object):
 			self.gpib.write("CONF:DIOD")
 		
 	def measure(self, sleep=0.2): #For frequency and period we need 1 sec of sleep, I don't know why (Gate time maybe?)
-		self.preCommand()
+		"""Take a measurement"""
+		self._preCommand()
 		self.gpib.write("READ?", sleep)
 		try:
 			return float(self.gpib.query("++read"))
@@ -126,12 +135,14 @@ class HP_34401A(object):
 			return False
 	
 	def setNPLC(self, cycles):
+		"""Set the number of NPLC"""
 		list_NPLC = ["1e1", "2e-2", "2e-1", "1e0", "1e1", "1e2"]
-		self.preCommand()
+		self._preCommand()
 		self.gpib.write("VOLT:DC:NPLC {:s}".format(list_NPLC[cycles.value]))
 	
 	def getNPLC(self):
-		self.preCommand()
+		"""Return the number of NPLC or False in case of problem"""
+		self._preCommand()
 		self.gpib.write("VOLT:DC:NPLC?")
 		t = self.gpib.query("++read")
 		if t == "+2.00000000E-02":
@@ -147,29 +158,35 @@ class HP_34401A(object):
 		return False
 	
 	def beep(self):
-		self.preCommand()
+		"""Emit a beep"""
+		self._preCommand()
 		self.gpib.write("SYST:BEEP")
 	
-	def setDisplay(self, on):
-		self.preCommand()
+	def setDisplayState(self, on):
+		"""Switch the display on or off"""
+		self._preCommand()
 		if on:
 			self.gpib.write("DISP:STATE ON")
 		else:
 			self.gpib.write("DISP:STATE OFF")
 	
 	def setDisplayNormal(self):
-		self.preCommand()
+		"""Set the display to normal mode (Show the measured value)"""
+		self._preCommand()
 		self.gpib.write("DISP:TEXT:CLEAR")
 	
 	def setDisplayText(self, text):
-		self.preCommand()
+		"""Set a custom text on the display (Max ? character)"""
+		self._preCommand()
 		self.gpib.write(f"DISP:TEXT \"{text}\"")
 	
 	def getDisplayText(self):
-		self.preCommand()
+		"""Get the custom text currently on the display"""
+		self._preCommand()
 		self.gpib.write("DISP:TEXT?")
 		return self.gpib.query("++read").replace('"', '')
 	
 	def local(self):
-		self.preCommand()
+		"""Go to local mode (Reenable the front panel control)"""
+		self._preCommand()
 		self.gpib.local()
