@@ -132,15 +132,18 @@ Go to local mode (Reenable the front panel control)
 from GPIB_WIFI import AR488_WIFI
 from HP_34401A import HP_34401A
 
-gpib = AR488_WIFI('192.168.178.36', timeout=5)
+gpib = AR488_WIFI('192.168.178.36', timeout=2)#, debug=True)
 dmm = HP_34401A( gpib, 3)
+print(dmm)
 dmm.setFunction(HP_34401A.Function.VOLTAGE_AC, HP_34401A.VoltageRange.RANGE_1000V, HP_34401A.Resolution.DIGIT_6)
 print("Voltage:", dmm.measure(), "V")
-dmm.setFunction(HP_34401A.Function.FREQUENCY)
-print("Frequency:", dmm.measure(), "Hz")
+dmm.setFunction(HP_34401A.Function.FREQUENCY, resolution=HP_34401A.Resolution.DIGIT_6)
+print("Frequency:", dmm.measure(sleep=2), "Hz")
 dmm.local()
 ```
-## Result of executing the above code (Not done yet):
+## Result of executing the above code:
 ```
-GPIB address: 3, IP: 192.168.178.36
+HP 34401A address: 3
+Voltage: 239.42613 V
+Frequency: 49.988412 Hz
 ```
