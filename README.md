@@ -136,7 +136,7 @@ from GPIB_WIFI import AR488_WIFI
 from HP_34401A import HP_34401A
 
 gpib = AR488_WIFI('192.168.178.36', timeout=2)
-dmm = HP_34401A( gpib, 3)
+dmm = HP_34401A(gpib, 3)
 print(dmm)
 dmm.setFunction(HP_34401A.Function.VOLTAGE_AC, HP_34401A.VoltageRange.RANGE_1000V, HP_34401A.Resolution.DIGIT_6)
 print("Voltage:", dmm.measure(), "V")
