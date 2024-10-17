@@ -1,16 +1,16 @@
-# HP_34401A
+# hp_34401a
 Python module for the HP 34401A 6½ digit multimeter.
 
 You must use my GPIB or GPIB_WIFI module to use this module.
 
 ## Supported command:
-### get_IDN()
+### get_idn()
 Return the *IDN? of the instrument
 
 ### reset()
 Reset the instrument to the default state
 
-### setFunction(function, sel_range, resolution)
+### set_function(function, sel_range, resolution)
 Set the function
 
 * `function`
@@ -84,12 +84,18 @@ Set the function
       <tr><td>HP_34401A.ResistanceRange.RANGE_100M</td><td>100 M&Omega; range</td></tr>
     </table>
 
-### measure()
+### measure(sleep)
 Take a measurement
+
+`sleep` add a pause between the READ? command and the measurement reading
+
+For frequency and period we need about 1.2 sec of sleep
+
+  `sleep` is not mandatory.
 
 Return the measurement as real value or `False` in case of problem
 
-### setNPLC(cycles)
+### set_nplc(cycles)
 Set the number of NPLC
 <table>
   <tr><td>cycles</td><td>Description</td></tr>
@@ -101,13 +107,13 @@ Set the number of NPLC
   <tr><td>HP_34401A.NPLC.NPLC_100</td><td>100 NPLC cycles</td></tr>
 </table>
 
-### getNPLC()
+### get_nplc()
 Return the number of NPLC or `False` in case of problem
 
 ### beep()
 Emit a beep
 
-### setDisplayState(on)
+### set_display_state(on)
 Switch the display on or off
 <table>
   <tr><td>on</td><td>Description</td></tr>
@@ -115,16 +121,16 @@ Switch the display on or off
   <tr><td>False</td><td>Switch off the display</td></tr>
 </table>
 
-### setDisplayNormal()
+### set_display_normal()
 Set the display to normal mode (Show the measured value) 
 
-### setDisplayText(text)
+### set_display_text(text)
 Set a custom `text` on the display (Max 12 character)
 
-### getDisplayText()
+### get_display_text()
 Get the custom text currently on the display
 
-### getError()
+### get_error()
 Get the last error
 
 ### local()
@@ -132,16 +138,16 @@ Go to local mode (Reenable the front panel control)
 
 ## Usage:
 ```python
-from GPIB_WIFI import AR488_WIFI
-from HP_34401A import HP_34401A
+from gpib_all import AR488Wifi
+from hp_34401a import HP34401A
 
-gpib = AR488_WIFI('192.168.178.36', timeout=2)
-dmm = HP_34401A(gpib, 3)
+gpib = AR488Wifi('192.168.178.36')
+dmm = HP34401A(gpib, 3)
 print(dmm)
-dmm.setFunction(HP_34401A.Function.VOLTAGE_AC, HP_34401A.VoltageRange.RANGE_1000V, HP_34401A.Resolution.DIGIT_6)
+dmm.set_function(HP34401A.Function.VOLTAGE_AC, HP34401A.VoltageRange.RANGE_1000V, HP34401A.Resolution.DIGIT_6)
 print("Voltage:", dmm.measure(), "V")
-dmm.setFunction(HP_34401A.Function.FREQUENCY, resolution=HP_34401A.Resolution.DIGIT_6)
-print("Frequency:", dmm.measure(sleep=2), "Hz")
+dmm.set_function(HP34401A.Function.FREQUENCY, resolution=HP34401A.Resolution.DIGIT_6)
+print("Frequency:", dmm.measure(sleep=1.2), "Hz")
 dmm.local()
 ```
 ## Result of executing the above code:
